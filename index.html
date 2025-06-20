@@ -1,0 +1,462 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVM Performance Analysis - RCA Report (Jan-May 2024 vs 2025)</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+        }
+        
+        .metric-card {
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .performance-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-positive {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        
+        .badge-negative {
+            background-color: #fef2f2;
+            color: #dc2626;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        
+        .data-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 8px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 11px;
+        }
+        
+        .data-table td {
+            padding: 10px 8px;
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 11px;
+        }
+        
+        .data-table tbody tr:hover {
+            background-color: #f9fafb;
+        }
+        
+        .chart-container {
+            height: 400px;
+            margin: 20px 0;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 24px 0;
+        }
+        
+        .insight-box {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        
+        .recommendation-item {
+            background: #f8fafc;
+            border-left: 4px solid #3b82f6;
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 0 8px 8px 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-7xl mx-auto p-6 bg-white">
+        <!-- Email Header -->
+        <div class="mb-8">
+            <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-lg">
+                <h1 class="text-2xl font-bold mb-2">
+                    <i class="fas fa-chart-line mr-2"></i>
+                    RCA Analysis – SVM Zalora & DF (Jan–May 2024 vs 2025)
+                </h1>
+                <p class="text-blue-100">Steve madden Zalora and DF Root Cause Analysis Report</p>
+            </div>
+            
+            <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                <p class="text-gray-700">
+                    <strong>Hi Monica,</strong><br><br>
+                    I hope this email finds you well. As part of our ongoing effort to evaluate SVM performance on Zalora and DF, 
+                    we have conducted a comprehensive root cause analysis comparing the first five months of 2024 vs 2025. 
+                    The objective was to identify the key metrics and performance drivers responsible for the year-on-year differences.
+                </p>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="mb-8">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <i class="fas fa-tachometer-alt mr-2 text-blue-600"></i>
+                Summary
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-gradient-to-br from-red-50 to-red-100 p-6 rounded-lg border-l-4 border-red-500">
+                    <h3 class="font-semibold text-red-800 mb-2">🔴 Key Issues Identified</h3>
+                    <ul class="text-sm text-red-700 space-y-1">
+                        <li>• CVR Dropped 0.59x (Zalora) and 0.70x (DF) YoY</li>
+                        <li>• MS% increased significantly due to higher paid dependency</li>
+                        <li>• CPM Spiked 0.70X in Meta DF</li>
+                        <li>• Paid Contribution Spiked 0.30x (Zalora) and 1.35x (DF) YoY (DF) YoY</li>
+                    </ul>
+                </div>
+                <div class="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg border-l-4 border-green-500">
+                    <h3 class="font-semibold text-green-800 mb-2">🟢 Positive Indicators</h3>
+                    <ul class="text-sm text-green-700 space-y-1">
+                        <li>• CTR improved 0.34x (Zalora) and 1.31x (DF)</li>
+                        <li>• ATV increased 16% on Zalora indicating premium positioning </li>
+                        <li>• Creative resonance significantly improved</li>
+                        <li>• Traffic quality enhanced with better targeting</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- SVM Zalora Analysis -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i class="fas fa-store mr-3 text-purple-600"></i>
+                SVM Zalora Performance Analysis
+            </h2>
+
+            <!-- Zalora Summary Metrics -->
+            <div class="bg-gradient-to-r from-purple-100 to-pink-100 p-6 rounded-lg mb-6">
+                <h3 class="text-lg font-semibold mb-4 text-purple-800">📊 Key Performance Highlights & Impact</h3>
+                <div class="summary-grid">
+                    <div class="metric-card bg-white p-4 rounded-lg shadow">
+                        <div class="text-2xl font-bold text-orange-600">-33.5%</div>
+                        <div class="text-sm text-gray-600">Net Sales Decline</div>
+                        <div class="text-xs text-gray-500">6.98B → 4.64B</div>
+                    </div>
+                    <div class="metric-card bg-white p-4 rounded-lg shadow">
+                        <div class="text-2xl font-bold text-orange-600">0.73x</div>
+                        <div class="text-sm text-gray-600">MS% Increase</div>
+                        <div class="text-xs text-gray-500">5.10% → 8.82%</div>
+                    </div>
+                    <div class="metric-card bg-white p-4 rounded-lg shadow">
+                        <div class="text-2xl font-bold text-orange-600">0.30x</div>
+                        <div class="text-sm text-gray-600">Paid Contribution</div>
+                        <div class="text-xs text-gray-500">5.10% → 8.78%</div>
+                    </div>
+                    <div class="metric-card bg-white p-4 rounded-lg shadow">
+                        <div class="text-2xl font-bold text-orange-600">-21.6%</div>
+                        <div class="text-sm text-gray-600">ROAS Decline</div>
+                        <div class="text-xs text-gray-500">4.63 → 3.63</div>
+                    </div>
+                </div>
+                
+                <div class="insight-box mt-4">
+                    <h4 class="font-semibold mb-2">🔍 Key Finding & Impact Analysis</h4>
+                    <p class="text-sm">
+                        <strong>High paid contribution (8.78% vs 6.83%) significantly impacted our organic revenue performance. The increased dependency on paid channels caused our MS% to spike from 5.10% to 8.82%, indicating lesser contribution from Organic contribution to our overall net sales. Additionally, the increased ATV directly correlates with the 0.6x drop in CVR, creating a higher perceived price value and ultimately impacting users’ lower-funnel decisions.
+                    </p>
+                </div>
+            </div>
+
+            
+            <!-- Zalora Key Observations -->
+            <div class="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-lg">
+                <h3 class="text-lg font-semibold mb-4 text-purple-800">
+                    <i class="fas fa-magnifying-glass mr-2"></i>Key Observations on Zalora
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-3">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-3 h-3 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <div>
+                                <p class="font-semibold text-red-700">Paid Contribution Impact</p>
+                                <p class="text-sm text-gray-700">Significant increase in 2025 across most months (especially Jan, Apr, May) suggests a decline in organic/CRM performance, impacting overall net sales and leading to higher MS%</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-3 h-3 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <div
+                                <p class="font-semibold text-blue-700">Conversion Rate Decline</p>
+                                <p class="text-sm text-gray-700">Despite 2025 achieving ~0.34x higher CTR and a 16% increase in ATV, conversion rates dropped by 0.59x YoY, resulting in fewer transactions.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-3 h-3 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <div>
+                                <p class="font-semibold text-purple-700">ROAS & CPT Impact</p>
+                                <p class="text-sm text-gray-700">Due to lower CVR, CPT rose by ~48%, reducing ROAS by ~22% in 2025 vs 2024.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-3 h-3 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <div>
+                                <p class="font-semibold text-blue-700">Market Positioning</p>
+                                <p class="text-sm text-gray-700">The higher ATV in 2025 likely reflects fewer discounts or higher-priced SKUs, making purchases less attractive and affecting conversion efficiency and ROAS. </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SVM DF Analysis -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i class="fas fa-shopping-cart mr-3 text-green-600"></i>
+                SVM DF Performance Analysis
+            </h2>
+
+            <!-- DF Summary Metrics -->
+            <div class="bg-gradient-to-r from-green-100 to-teal-100 p-6 rounded-lg mb-6">
+                <h3 class="text-lg font-semibold mb-4 text-green-800">📊 Key Performance Highlights & Impact</h3>
+                <div class="summary-grid">
+                    <div class="metric-card bg-white p-4 rounded-lg shadow">
+                        <div class="text-2xl font-bold text-orange-600">18%</div>
+                        <div class="text-sm text-gray-600">Net Sales Decline</div>
+                        <div class="text-xs text-gray-500">856M → 698M</div>
+                    </div>
+                    <div class="metric-card bg-white p-4 rounded-lg shadow">
+                        <div class="text-2xl font-bold text-orange-600">0.34x</div>
+                        <div class="text-sm text-gray-600">MS% Increase</div>
+                        <div class="text-xs text-gray-500">9.76% → 13.04%</div>
+                    </div>
+                    <div class="metric-card bg-white p-4 rounded-lg shadow">
+                        <div class="text-2xl font-bold text-orange-600">0.30x</div>
+                        <div class="text-sm text-gray-600">CTR Improvement</div>
+                        <div class="text-xs text-gray-500">1.43% → 3.31%</div>
+                    </div>
+                    <div class="metric-card bg-white p-4 rounded-lg shadow">
+                        <div class="text-2xl font-bold text-orange-600"> 9%</div>
+                        <div class="text-sm text-gray-600">Spend Scale</div>
+                        <div class="text-xs text-gray-500">83M → 91M</div>
+                    </div>
+                </div>
+                
+                <div class="insight-box mt-4">
+                    <h4 class="font-semibold mb-2">🔍 Key Finding & Impact Analysis</h4>
+                    <p class="text-sm">
+                        <strong>DF showed excellent creative performance with 1.31X CTR improvement, but suffered from similar conversion issues. The increased paid contribution (1.34x higher) indicates reduced organic performance strength. The higher MS% (~0.34x increase) combined with 0.70x CVR drop created a challenging efficiency scenario despite improved traffic quality. The platform's creative resonance improvements weren't sufficient to offset the fundamental conversion challenges.
+                    </p>
+                </div>
+            </div>
+
+           
+            
+            <!-- DF Key Observations -->
+            <div class="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg">
+                <h3 class="text-lg font-semibold mb-4 text-green-800">
+                    <i class="fas fa-magnifying-glass mr-2"></i>Key Observations on DF
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-3">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-3 h-3 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <div>
+                                <p class="font-semibold text-green-700">Spend Scaling </p>
+                                <p class="text-sm text-gray-700">Spends were scaled by ~9% in 2025 vs 2024 with improved CTR (~1.31x higher), indicating better creative resonance.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-3 h-3 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <div>
+                                <p class="font-semibold text-red-700">Conversion Challenge</p>
+                                <p class="text-sm text-gray-700">Despite this, CVR dropped by ~0.70x YoY, leading to increased CPT (1.9X) and a 67% drop in ROAS.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-3 h-3 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <div>
+                                <p class="font-semibold text-orange-700">Organic Performance Decline</p>
+                                <p class="text-sm text-gray-700">Paid contribution rose by 1.35x, reflecting lower organic net sales and overall lower returns.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-3 h-3 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <div>
+                                <p class="font-semibold text-blue-700">Traffic Quality Improvement</p>
+                                <p class="text-sm text-gray-700">Significant CTR improvements indicate better audience targeting and creative effectiveness despite conversion challenges.
+</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <!-- Recommendations Section -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                Recommendations based on above analysis
+            </h2>
+            
+            <div class="space-y-4">
+                <div class="recommendation-item">
+                    <h3 class="font-semibold text-blue-700 mb-2">
+                        <i class="fas fa-tags mr-2"></i>1. Product & Pricing Strategy Optimization
+                    </h3>
+                    <p class="text-gray-700 mb-2">
+                        <strong> Reintroduce mid-range SKUs and strategic promotions to support CVR recovery and balance ATV optimization.
+                    </p>
+                    <div class="text-sm text-gray-600">
+                        <strong>Expected Impact:</strong> CVR improvement, ROAS recovery
+                    </div>
+                </div>
+
+                <div class="recommendation-item">
+                    <h3 class="font-semibold text-green-700 mb-2">
+                        <i class="fas fa-cogs mr-2"></i>2. User Experience & Conversion Funnel Audit on Website
+                    </h3>
+                    <p class="text-gray-700 mb-2">
+                        <strong>Comprehensive audit of product pages and checkout process to identify and eliminate conversion barriers.
+                    </p>
+                    <div class="text-sm text-gray-600">
+                        <strong>Expected Impact:</strong> CVR improvement, reduced cart abandonment
+                    </div>
+                </div>
+
+                <div class="recommendation-item">
+                    <h3 class="font-semibold text-purple-700 mb-2">
+                        <i class="fas fa-balance-scale mr-2"></i>3. Paid vs Organic Channel Rebalancing
+                    </h3>
+                    <p class="text-gray-700 mb-2">
+                        <strong>Strengthen organic channels through enhanced CRM, push notifications, and social engagement to reduce Paid dependency.
+                    </p>
+                    <div class="text-sm text-gray-600">
+                        <strong>Expected Impact:</strong> Paid contribution and MS% improvement
+                    </div>
+                                </div>
+            </div>
+        </div>
+
+        <!-- Conclusion Summary -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i class="fas fa-clipboard-check mr-3 text-gray-700"></i>
+                Conclusion Summary
+            </h2>
+            
+            <div class="bg-gradient-to-r from-gray-100 to-gray-200 p-6 rounded-lg">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <h3 class="font-semibold text-red-700 mb-3">Critical Performance Gaps</h3>
+                        <table class="w-full text-sm">
+                            <tr>
+                                <td class="py-1 font-medium">CVR Decline:</td>
+                                <td class="py-1 text-red-600 font-semibold">0.59x (Zalora), 0.70x (DF)</td>
+                            </tr>
+                            <tr>
+                                <td class="py-1 font-medium">ROAS Impact:</td>
+                                <td class="py-1 text-red-600 font-semibold"> -22% (Zalora), -64% (DF)</td>
+                            </tr>
+                            <tr>
+                                <td class="py-1 font-medium">Paid contribution:</td>
+                                <td class="py-1 text-red-600 font-semibold"> 0.30x (Zalora) and 1.35x (DF) </td>
+                            </tr>
+                            <tr>
+                                <td class="py-1 font-medium">MS% Increas:</td>
+                                <td class="py-1 text-red-600 font-semibold">0.73x (Zalora) and 0.34x (DF)</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <h3 class="font-semibold text-green-700 mb-3">Positive Indicators</h3>
+                        <table class="w-full text-sm">
+                            <tr>
+                                <td class="py-1 font-medium">CTR Growth:</td>
+                                <td class="py-1 text-green-600 font-semibold"> 1.27x (Zalora), 2.31x (DF)</td>
+                            </tr>
+                            <tr>
+                                <td class="py-1 font-medium">ATV Improvement:</td>
+                                <td class="py-1 text-green-600 font-semibold">+15% both platforms</td>
+                            </tr>
+                            <tr>
+                                <td class="py-1 font-medium">Creative Performance:</td>
+                                <td class="py-1 text-green-600 font-semibold">Significantly Enhanced</td>
+                            </tr>
+                            <tr>
+                                <td class="py-1 font-medium">Traffic Quality:</td>
+                                <td class="py-1 text-green-600 font-semibold">Improved Targeting</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                    <h4 class="font-semibold text-blue-800 mb-2">Strategic Conclusion</h4>
+                    <p class="text-blue-700 text-sm">
+                        The performance decline in 2025 is primarily driven by a conversion rate and organic contribution drop. Despite improved interest towards the products (higher CTR) and increased spending, both platforms experienced significant CVR drops, leading to higher costs and reduced ROAS. The combination of elevated ATV due to lack of offers and increased paid channel dependency suggests that pricing strategies and organic channel performance require attention to uptick our profitable growth.
+                   </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Email Footer -->
+        <div class="border-t pt-6 mt-8">
+            <p class="text-gray-700 mb-4">
+                Please find the spreadsheet linked below with detailed breakdowns for your review:
+<p class="text-gray-700 mb-4">
+https://docs.google.com/spreadsheets/d/1a2g1ECrL8Xaq1l8gdbpZ63w9MtHILRuTOAB_1klwbEk/edit?gid=0#gid=0
+            </p>
+<p class="text-gray-700 mb-4">
+Let us know if any further clarification or deep dive is needed — happy to walk you through the findings.
+            </p>
+</p>
+            
+            <div class="bg-blue-50 p-4 rounded-lg">
+                <p class="text-gray-700">
+                    <strong>Best regards,</strong><br>
+                    <span class="text-blue-600 font-semibold">Performics Team</span><br>
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>
+  
+    
